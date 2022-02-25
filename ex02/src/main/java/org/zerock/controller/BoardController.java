@@ -24,13 +24,19 @@ public class BoardController {
 	@GetMapping("/list")
 	public void list(Model model) {
 		log.info("list를 만들어냄");
-		model.addAttribute(service.getList());
+		model.addAttribute("list", service.getList());
+	}
+	
+	@GetMapping("register")
+	public void register() {
+		
 	}
 	
 	@PostMapping("register")
 	public String register(BoardVO board, RedirectAttributes rttr) {
 		log.info("register" + board);
 		service.register(board);
+		log.info("글번호: " + board.getBno());
 		rttr.addFlashAttribute("result", board.getBno());
 		
 		return "redirect:/board/list";
