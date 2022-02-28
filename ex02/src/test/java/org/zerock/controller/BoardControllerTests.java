@@ -30,7 +30,7 @@ public class BoardControllerTests {
 	public void setup() {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(ctx).build();
 	}
-	
+	/*
 	@Test
 	public void testList() throws Exception {
 		log.info(
@@ -38,6 +38,15 @@ public class BoardControllerTests {
 				.andReturn()
 				.getModelAndView()
 				.getModelMap());
+	}*/
+	
+	@Test
+	public void testListPaging() throws Exception{
+		log.info(mockMvc.perform(
+				MockMvcRequestBuilders.get("/board/list")
+				.param("pageNum", "1")
+				.param("amount", "10"))
+				.andReturn().getModelAndView().getModelMap());
 	}
 	
 	@Test
