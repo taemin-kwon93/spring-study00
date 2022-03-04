@@ -58,8 +58,11 @@
 	<!-- /.col-lg-12 -->
 </div>
 <!-- /.row -->
+<script type="text/javascript" src="/resources/js/reply.js"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
+		console.log(replyService);
+		
 		var operForm = $("#operForm");
 		$("button[data-oper='modify']").on("click", function(e){
 			operForm.attr("action", "/board/modify").submit();
