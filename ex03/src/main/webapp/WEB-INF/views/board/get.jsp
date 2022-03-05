@@ -64,15 +64,31 @@
 <script>
 	$(document).ready(function(){
 		console.log("==========");		
-		console.log("JS TEST");	
-		var bnoValue = '<c:out value="${board.bno}"/>';
+		console.log("JS TEST2");	
+
+		var bnoValue ='<c:out value="${board.bno}"/>';
+		
 		replyService.add(
-		{reply:"JS TEST", replyer:"tester", bno:bnoValue}
+		{reply:"JS TEST4", replyer:"tester4", bno:bnoValue}
 		,
 			function(result) {
 				alert("Result: " + result);	
 			}
-		);
+		)
+	})
+</script>
+
+<script>
+ 	console.log("==========");
+	console.log("JS TEST2");	
+	
+	var bnoValue = '<c:out value="${board.bno}"/>';
+	
+	replyService.getList({bno:bnoValue, page:1}, function(list){
+	    
+		  for(var i = 0,  len = list.length||0; i < len; i++ ){
+		    console.log(list[i]);
+		  }
 	});
 </script>
 
