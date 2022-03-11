@@ -53,6 +53,12 @@ public class LogAdvice {
 
 		return result;
 	}
-	 
+	
+	/*
+	 * @Around("execution(* org.zerock.service.SampleTxService*.*(..))") public void
+	 * doTest() { log.info("mapper1");
+	 * 
+	 * }
+	 */
 	
 }
