@@ -43,7 +43,7 @@
 									<td><fmt:formatDate pattern="yyyy-MM-dd" value="${board.regdate}"/></td>
 									<td><fmt:formatDate pattern="yyyy-MM-dd" value="${board.updateDate}"/></td>
 								</tr>
-								</c:forEach> 
+								</c:forEach>
 							</table>
 							
 			<div class="row">

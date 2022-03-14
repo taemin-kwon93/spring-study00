@@ -16,29 +16,28 @@ import lombok.extern.log4j.Log4j;
 @Component
 public class LogAdvice {
 
-  @Before( "execution(* org.zerock.service.SampleService*.*(..))")
-  public void logBefore() {
+	@Before("execution(* org.zerock.service.SampleService*.*(..))")
+	public void logBefore() {
 
-    log.info("========================");
-  }
-  
-  @Before("execution(* org.zerock.service.SampleService*.doAdd(String, String)) && args(str1, str2)")
-  public void logBeforeWithParam(String str1, String str2) {
+		log.info("========================");
+	}
 
-    log.info("str1: " + str1);
-    log.info("str2: " + str2);
-  }  
+	@Before("execution(* org.zerock.service.SampleService*.doAdd(String, String)) && args(str1, str2)")
+	public void logBeforeWithParam(String str1, String str2) {
 
-  @AfterThrowing(pointcut = "execution(* org.zerock.service.SampleService*.*(..))", throwing="exception")
-  public void logException(Exception exception) {
-    
-    log.info("Exception....!!!!");
-    log.info("exception: "+ exception);
-  
-  }
-  
-  
-  @Around("execution(* org.zerock.service.SampleService*.*(..))")
+		log.info("str1: " + str1);
+		log.info("str2: " + str2);
+	}
+
+	@AfterThrowing(pointcut = "execution(* org.zerock.service.SampleService*.*(..))", throwing = "exception")
+	public void logException(Exception exception) {
+
+		log.info("Exception....!!!!");
+		log.info("exception: " + exception);
+
+	}
+
+	@Around("execution(* org.zerock.service.SampleService*.*(..))")
   public Object logTime( ProceedingJoinPoint pjp) {
     
     long start = System.currentTimeMillis();
@@ -53,7 +52,6 @@ public class LogAdvice {
     try {
       result = pjp.proceed();
     } catch (Throwable e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     
@@ -62,21 +60,7 @@ public class LogAdvice {
     log.info("TIME: "  + (end - start));
     
     return result;
-  }
-
-<<<<<<< Upstream, based on main
-		return result;
-	}
-	
-	/*
-	 * @Around("execution(* org.zerock.service.SampleTxService*.*(..))") public void
-	 * doTest() { log.info("mapper1");
-	 * 
-	 * }
-	 */
-	
-=======
+}
 
 
->>>>>>> 9ae9b9d 22.03.12
 }
