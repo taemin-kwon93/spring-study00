@@ -4,6 +4,49 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ include file="../includes/header.jsp" %>
 
+	<style>
+	.uploadResult {
+		width: 100%;
+		background-color: gray;
+	}
+	
+	.uploadResult ul {
+		display: flex;
+		flex-flow: row;
+		justify-content: center;
+		align-items: center;
+	}
+	
+	.uploadResult ul li {
+		list-style: none;
+		padding: 10px;
+	}
+	
+	.uploadResult ul li img {
+		width: 300px;
+	}
+	</style>
+	
+	<style>
+	.bigPictureWrapper {
+	  position: absolute;
+	  display: none;
+	  justify-content: center;
+	  align-items: center;
+	  top:0%;
+	  width:100%;
+	  height:100%;
+	  background-color: gray; 
+	  z-index: 100;
+	}
+	
+	.bigPicture {
+	  position: relative;
+	  display:flex;
+	  justify-content: center;
+	  align-items: center;
+	}
+	</style>
 
 <div class="row">
 	<div class="col-lg-12">
@@ -59,11 +102,32 @@
 	<!-- /.col-lg-12 -->
 </div>
 <!-- /.row -->
+
+<div class='bigPictureWrapper'>
+  <div class='bigPicture'>
+  </div>
+</div>
+
+
+
 <div class="row">
-	<div class="col-lg-12">
-		<h1 class="page-header">Board Read</h1>
-	</div>
-	<!-- /.col-lg-12 -->
+  <div class="col-lg-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">Files</div>
+      <!-- /.panel-heading -->
+      <div class="panel-body">
+        
+        <div class='uploadResult'> 
+          <ul>
+          
+          </ul>
+        </div>
+      </div>
+      <!--  end panel-body -->
+    </div>
+    <!--  end panel-body -->
+  </div>
+  <!-- end panel -->
 </div>
 <!-- /.row -->
 
@@ -308,58 +372,96 @@ $(document).ready(function(){
 </script>
 
 <script>
-/*
-	<!-- C 댓글 추가 확인 -->
-	replyService.add(
-	{reply:"JS TEST4", replyer:"tester4", bno:bnoValue}
-	,
-		function(result) {
-			alert("Result: " + result);	
-		}
-	)
-
-	//D 댓글 삭제 확인 
-	replyService.remove(26, function(conut) {
-		console.log("Removed...");
-		console.log(count);
-		
-		if (count === "success") {
-			alert("Removed");
-		}
-	}, function(err) {
-		alert("Error");
-	});
-		
-	replyService.update({
-		rno : 20,
-		bno : bnoValue,
-		reply : "Modified..."
-		}, 
-		function(result){
-			alert("수정완료");		
-		});
+$(document).ready(function(){
 	
-	replyService.get(10, function(data) { 
-		console.log(data);
+	var operForm = $("#operForm");
+	$("button[data-oper='modify']").on("click", function(e){
+		operForm.attr("action", "/board/modify").submit();
 	});
- 
- */
-</script>
+	
+	$("button[data-oper='list']").on("click", function(e){
+		operForm.find("#bno").remove();
+		operForm.attr("action", "/board/list")
+		operForm.submit();
+	});
+	
+});
 
-<script>
-	$(document).ready(function(){
+$(document).ready(function(){
+	  
+	  (function(){
+	  
+	    var bno = '<c:out value="${board.bno}"/>';
+	    
+	    /* $.getJSON("/board/getAttachList", {bno: bno}, function(arr){
+	    
+	      console.log(arr);
+	      
+	      
+	    }); *///end getjson
+	    $.getJSON("/board/getAttachList", {bno: bno}, function(arr){
+	        
+	       console.log(arr);
+	       
+	       var str = "";
+	       
+	       $(arr).each(function(i, attach){
+	       
+	         //image type
+	         if(attach.filetype){
+	           var fileCallPath =  encodeURIComponent( attach.uploadPath+ "/s_"+attach.uuid +"_"+attach.fileName);
+	           
+	           str += "<li data-path='"+attach.uploadPath+"' data-uuid='"+attach.uuid+"' data-filename='"+attach.fileName+"' data-type='"+attach.filetype+"' ><div>";
+	           str += "<img src='/display?fileName="+fileCallPath+"'>";
+	           str += "</div>";
+	           str +"</li>";
+	         }else{
+	             
+	           str += "<li data-path='"+attach.uploadPath+"' data-uuid='"+attach.uuid+"' data-filename='"+attach.fileName+"' data-type='"+attach.filetype+"' ><div>";
+	           str += "<span> "+ attach.fileName+"</span><br/>";
+	           str += "<img src='/resources/img/attach.png'></a>";
+	           str += "</div>";
+	           str +"</li>";
+	         }
+	       });
+	       
+	       $(".uploadResult ul").html(str);
+	       
+	       
+	     });//end getjson
+
+	    
+	  })();//end function
+	
+	$(".uploadResult").on("click", "li", function(e){
+		console.log("view image");
 		
-		var operForm = $("#operForm");
-		$("button[data-oper='modify']").on("click", function(e){
-			operForm.attr("action", "/board/modify").submit();
-		});
+		var liObj = $(this);
+		var path = encodeURIComponent(liObj.data("path")+"/"+liObj.data("uuid")+"_"+liObj.data("filename"));
 		
-		$("button[data-oper='list']").on("click", function(e){
-			operForm.find("#bno").remove();
-			operForm.attr("action", "/board/list")
-			operForm.submit();
-		});
+		if(liObj.data("type")) {
+			showImage(path.replace(new RegExp(/\\/g),"/"));
+		} else {
+			self.location ="/download?fileName="+path;
+		}
 	});
+	
+	function showImage(fileCallPath) {
+		alert(fileCallPath);
+		$(".bigPictureWrapper").css("display", "flex").show();
+		$(".bigPicture")
+		.html("<img src='/display?fileName="+fileCallPath+"'>")
+		.animate({width:'100%', height:'100%'}, 1000);
+	}
+	
+	$(".bigPictureWrapper").on("click", function(e){
+	   $(".bigPicture").animate({width:'0%', height: '0%'}, 1000);
+	   setTimeout(function(){
+	     $('.bigPictureWrapper').hide();
+	   }, 1000);
+	 });
+	
+});
 </script>
 
 <%@ include file="../includes/footer.jsp" %>

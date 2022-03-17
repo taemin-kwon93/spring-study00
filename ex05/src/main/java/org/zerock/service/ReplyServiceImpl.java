@@ -27,7 +27,7 @@ public class ReplyServiceImpl implements ReplyService {
 	@Transactional
 	@Override
 	public int register(ReplyVO vo) {
-		log.info("register : " + vo);
+		log.info("register  : " + vo);
 		boardMapper.updateReplyCnt(vo.getBno(), 1);
 		return mapper.insert(vo);
 	}

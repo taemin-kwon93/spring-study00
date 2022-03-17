@@ -58,12 +58,12 @@
   </div>
 </div>
 
-<div class="uploadDiv">
-	<input type="file" name="uploadFile" multiple>
+<div class='uploadDiv'>
+	<input type='file' name='uploadFile' multiple>
 </div>
-<button id="uploadBtn">Upload</button>
+<button id='uploadBtn'>Upload</button>
 
-<div class="uploadResult">
+<div class='uploadResult'>
 	<ul>
 		
 	</ul>

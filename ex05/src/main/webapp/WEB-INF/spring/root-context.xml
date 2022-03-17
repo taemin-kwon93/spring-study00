@@ -38,8 +38,10 @@
 	<tx:annotation-driven />
 	
 	<mybatis-spring:scan base-package="org.zerock.mapper" />
-	<context:component-scan base-package="org.zerock.service" />
-	<context:component-scan base-package="org.zerock.aop" />
+	<context:component-scan
+		base-package="org.zerock.service"></context:component-scan>
+	<context:component-scan
+		base-package="org.zerock.aop"></context:component-scan>
 
 	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
 
