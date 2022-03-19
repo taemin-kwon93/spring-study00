@@ -73,7 +73,7 @@ public class UploadController {
 		String str = sdf.format(date);
 		
 		return str.replace("-", File.separator);
-	}
+	} 
 	
 	@PostMapping(value = "/uploadAjaxAction", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
