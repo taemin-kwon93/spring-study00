@@ -4,30 +4,31 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ include file="../includes/header.jsp" %>
 
+
+
 	<style>
 	.uploadResult {
-		width: 100%;
-		background-color: gray;
+	  width:100%;
+	  background-color: gray;
 	}
-	
-	.uploadResult ul {
-		display: flex;
-		flex-flow: row;
-		justify-content: center;
-		align-items: center;
+	.uploadResult ul{
+	  display:flex;
+	  flex-flow: row;
+	  justify-content: center;
+	  align-items: center;
 	}
-	
 	.uploadResult ul li {
-		list-style: none;
-		padding: 10px;
+	  list-style: none;
+	  padding: 10px;
+	  align-content: center;
+	  text-align: center;
 	}
-	
-	.uploadResult ul li img {
-		width: 300px;
+	.uploadResult ul li img{
+	  width: 100px;
 	}
-	</style>
-	
-	<style>
+	.uploadResult ul li span {
+	  color:white;
+	}
 	.bigPictureWrapper {
 	  position: absolute;
 	  display: none;
@@ -38,15 +39,21 @@
 	  height:100%;
 	  background-color: gray; 
 	  z-index: 100;
+	  background:rgba(255,255,255,0.5);
 	}
-	
 	.bigPicture {
 	  position: relative;
 	  display:flex;
 	  justify-content: center;
 	  align-items: center;
 	}
+	
+	.bigPicture img {
+	  width:600px;
+	}
+	
 	</style>
+	
 
 
 <div class="row">
@@ -223,8 +230,8 @@ $(document).ready(function(){
 			
 			$(arr).each(function(i, attach){
 				if(attach.filetype){
-					var fileCallPath =  encodeURIComponent( attach.uploadPath+ "/s_"+attach.uuid +"_"+attach.fileName);
-				
+					var fileCallPath =  encodeURIComponent(attach.uploadPath+ "/s_"+attach.uuid +"_"+attach.fileName);
+					console.log("22.03.21_파일의 저장 경로 확인 : " + fileCallPath);
 					str += "<li data-path='"+attach.uploadPath+"' data-uuid='"+attach.uuid+"' "
 					str +=" data-filename='"+attach.fileName+"' data-type='"+attach.filetype+"' ><div>";
 					str += "<span> "+ attach.fileName+"</span>";
@@ -234,11 +241,11 @@ $(document).ready(function(){
 					str += "</div>";
 					str +"</li>";
 				} else {
-					    
+					console.log("22.03.21_2222파일의 저장 경로 확인 : " + fileCallPath);   
 					str += "<li data-path='"+attach.uploadPath+"' data-uuid='"+attach.uuid+"' "
 					str += "data-filename='"+attach.fileName+"' data-type='"+attach.filetype+"' ><div>";
 					str += "<span> "+ attach.fileName+"</span><br/>";
-					str += "<button type='button' data-file=\'"+fileCallPath+"\' data-type='file' "
+					str += "<button type='button' data-type='file' "
 					str += " class='btn btn-warning btn-circle'><i class='fa fa-times'></i></button><br>";
 					str += "<img src='/resources/img/attach.png'></a>";
 					str += "</div>";
