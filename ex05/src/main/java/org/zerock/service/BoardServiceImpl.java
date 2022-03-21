@@ -66,7 +66,7 @@ public class BoardServiceImpl implements BoardService{
 				attachMapper.insert(attach);
 			});
 		}
-
+		
 		return modifyResult;
 	}
 
