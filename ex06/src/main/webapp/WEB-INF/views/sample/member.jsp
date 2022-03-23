@@ -9,6 +9,7 @@
 <body>
 
 <p>member</p>	
+<a href="/customLogout">로그아웃</a>
 
 </body>
 </html>
