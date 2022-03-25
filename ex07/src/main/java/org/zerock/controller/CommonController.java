@@ -4,6 +4,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import lombok.extern.log4j.Log4j;
 
@@ -19,6 +20,7 @@ public class CommonController {
 	
 	@GetMapping("/customLogin")
 	public void loginInput(String error, String logout, Model model) {
+		
 		log.info("loginInput_ error: " + error);
 		log.info("loginInput_ logout: " + logout);
 
@@ -32,8 +34,15 @@ public class CommonController {
 	}
 	
 	@GetMapping("/customLogout")
-	public void logoutGet() {
-		log.info("custom Logout");
+	public void logoutGET() {
+
+		log.info("custom logout");
 	}
-	
+
+	@PostMapping("/customLogout")
+	public void logoutPost() {
+
+		log.info("post custom logout");
+	}
+
 }

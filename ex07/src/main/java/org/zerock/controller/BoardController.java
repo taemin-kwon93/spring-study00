@@ -5,9 +5,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +26,7 @@ import org.zerock.domain.PageDTO;
 import org.zerock.service.BoardService;
 
 import lombok.AllArgsConstructor;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j;
 
 @Controller
@@ -32,38 +35,27 @@ import lombok.extern.log4j.Log4j;
 @AllArgsConstructor
 public class BoardController {
 	
+	@Setter(onMethod_ = @Autowired)
 	private BoardService service;
-	/*
-	@GetMapping("/list")
-	public void list(Model model) {
-		log.info("list를 만들어냄");
-		model.addAttribute("list", service.getList());
-	}
-	
-	@GetMapping("/list")
-	public void list(Criteria cri, Model model) {
-		log.info("list를 만들어냄, cri = " + cri);
-		model.addAttribute("list", service.getList(cri));
-		model.addAttribute("pageMaker", new PageDTO(cri, 123));
-	}
-	*/
 	
 	@GetMapping("/list")
 	public void list(Criteria cri, Model model) {
 		
 		log.info("list를 만들어냄, cri = " + cri);
 		model.addAttribute("list", service.getList(cri));
-		//model.addAttribute("pageMaker", new PageDTO(cri, 123));
 		int total = service.getTotal(cri);
+		log.info("total: " + total);
 		model.addAttribute("pageMaker", new PageDTO(cri, total));
 	}
 	
 	@GetMapping("/register")
+	@PreAuthorize("isAuthenticated()")//로그인한 사용자만 해당기능을 사용.
 	public void register() {
 		
 	}
 	
 	@PostMapping("/register")
+	@PreAuthorize("isAuthenticated()")//로그인한 사용자만 해당기능을 사용.
 	public String register(BoardVO board, RedirectAttributes rttr) {
 		log.info("==============================");
 		log.info("register Log: " + board);
@@ -92,23 +84,20 @@ public class BoardController {
 		model.addAttribute("board", service.get(bno));
 	}
 	
+	@PreAuthorize("principal.username == #board.writer")
 	@PostMapping("/modify")
-	public String modify(BoardVO board, @ModelAttribute("cri") Criteria cri, RedirectAttributes rttr) {
+	public String modify(BoardVO board, Criteria cri, RedirectAttributes rttr) {
 		log.info("modify:" + board);
 
 		if (service.modify(board)) {
 			rttr.addFlashAttribute("result", "success");
 		}
 
-		rttr.addAttribute("pageNum", cri.getPageNum());
-		rttr.addAttribute("amount", cri.getAmount());
-		rttr.addAttribute("type", cri.getType());
-		rttr.addAttribute("keyword", cri.getKeyword());
-
-		return "redirect:/board/list";
+		return "redirect:/board/list" + cri.getListLink();
 	}
 	
-	@PostMapping("remove")
+	@PreAuthorize("principal.username == #writer")
+	@PostMapping("/remove")
 	public String remove(@RequestParam("bno") Long bno, 
 			@ModelAttribute("cri") Criteria cri, RedirectAttributes rttr) {
 		

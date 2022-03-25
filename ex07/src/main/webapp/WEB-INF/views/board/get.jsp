@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <%@ include file="../includes/header.jsp" %>
 
 	<style>
@@ -83,8 +84,12 @@
 						<label>Writer</label><input class="form-control" name="writer"
 							value='<c:out value="${board.writer}"/>' readonly="readonly">
 					</div>
-					<button data-oper='modify' class="btn btn-default"
-						onclick="location.href='/board/modify?bno=<c:out value="${board.bno}"/>'">Modify</button>
+					<sec:authentication property="principal" var="pinfo"/>
+					<sec:authorize access="isAuthenticated()">
+					<c:if test="${pinfo.username eq board.writer }">
+					<button data-oper='modify' class="btn btn-default">Modify</button>
+					</c:if>
+					</sec:authorize>
 					<button data-oper='list' class="btn btn-info"
 						onclick="location.href='/board/list'">List</button>
 				<form id="operForm" action="/board/modify" method="get">
@@ -107,8 +112,6 @@
   <div class='bigPicture'>
   </div>
 </div>
-
-
 
 <div class="row">
   <div class="col-lg-12">
@@ -137,7 +140,9 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<i class="fa fa-comments fa-fw"></i> Reply
+				<sec:authorize access="isAuthenticated()">
 				<button id='addReplyBtn' class='btn btn-primary btn-xs pull-right'>New Reply</button>
+				</sec:authorize>
 			</div>
 			<!-- /.panel-heading -->
 			
@@ -193,9 +198,6 @@
 
 <script>
 $(document).ready(function(){
-	console.log("==========");		
-	console.log("JS TEST2");	
-	
 	
 	var bnoValue ='<c:out value="${board.bno}"/>';
 	var replyUL = $(".chat");
@@ -306,15 +308,34 @@ $(document).ready(function(){
 	var modalRemoveBtn = $("#modalRemoveBtn");
 	var modalRegisterBtn = $("#modalRegisterBtn");
 	
+	var replyer = null;
+	
+	<sec:authorize access="isAuthenticated()">
+	replyer = '<sec:authentication property="principal.username"/>';   
+	</sec:authorize>
+	
+	var csrfHeaderName ="${_csrf.headerName}"; 
+	var csrfTokenValue="${_csrf.token}";
+	
+    $("#modalCloseBtn").on("click", function(e){
+    	
+    	modal.modal('hide');
+    });
+    
 	$("#addReplyBtn").on("click", function(e){
 		modal.find("input").val("");
+		modal.find("input[name='replyer']").val(replyer);
 		modalInputReplyDate.closest("div").hide();
 		modal.find("button[id !='modalCloseBtn']").hide();
 		
 		modalRegisterBtn.show();
 		$(".modal").modal("show");
 	});
-	
+
+	$(document).ajaxSend(function(e, xhr, options) { 
+        xhr.setRequestHeader(csrfHeaderName, csrfTokenValue); 
+      }); 
+
 	modalRegisterBtn.on("click", function(e) {
 		var reply = {
 				reply : modalInputReply.val(),
@@ -350,7 +371,7 @@ $(document).ready(function(){
 		});
 	});//$(".chat").on
 	
-	modalModBtn.on("click", function(e) {
+	/* modalModBtn.on("click", function(e) {
 		var reply = {rno:modal.data("rno"), reply:modalInputReply.val()};
 		replyService.update(reply, function(result) {
 			alert(result);
@@ -366,6 +387,79 @@ $(document).ready(function(){
 			modal.modal("hide");
 			showList(pageNum);
 		});
+	}); */
+	
+	modalModBtn.on("click",
+	function(e) {
+	
+		var originalReplyer = modalInputReplyer
+				.val();
+	
+		var reply = {
+			rno : modal.data("rno"),
+			reply : modalInputReply.val(),
+			replyer : originalReplyer
+		};
+	
+		if (!replyer) {
+			alert("로그인후 수정이 가능합니다.");
+			modal.modal("hide");
+			return;
+		}
+	
+		console.log("Original Replyer: "
+				+ originalReplyer);
+	
+		if (replyer != originalReplyer) {
+	
+			alert("자신이 작성한 댓글만 수정이 가능합니다.");
+			modal.modal("hide");
+			return;
+	
+		}
+	
+		replyService.update(reply,
+		function(result) {
+
+		alert(result);
+		modal.modal("hide");
+		showList(pageNum);
+
+		});
+		
+	});
+		
+	modalRemoveBtn.on("click", function (e){
+	 	  
+		var rno = modal.data("rno");
+		
+		console.log("RNO: " + rno);
+		console.log("REPLYER: " + replyer);
+		
+			if(!replyer){
+				alert("로그인후 삭제가 가능합니다.");
+				modal.modal("hide");
+				return;
+			}
+		
+		var originalReplyer = modalInputReplyer.val();
+		
+		console.log("Original Replyer: " + originalReplyer);
+		
+			if(replyer  != originalReplyer){
+				alert("자신이 작성한 댓글만 삭제가 가능합니다.");
+				modal.modal("hide");
+				return;
+			}
+			
+		
+		replyService.remove(rno, originalReplyer, function(result){
+			alert(result);
+			modal.modal("hide");
+			showList(pageNum);
+			    
+		});
+		  
 	});
 	
 });//$(document).ready

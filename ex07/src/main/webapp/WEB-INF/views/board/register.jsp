@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <%@ include file="../includes/header.jsp" %>
 
 <style>
@@ -48,8 +49,8 @@
 }
 </style>
 	
-<div class="row">
-	<div class="col-lg-12">
+<div class='row'>
+	<div class='col-lg-12'>
 		<h1 class="page-header">Board Register</h1>
 	</div>
 	<!-- /.col-lg-12 -->
@@ -64,6 +65,7 @@
 			<!-- /.panel-heading -->
 			<div class='panel-body'>
 				<form role='form' action='/board/register' method='post'>
+					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 					<div class='form-group'>
 						<label>Title</label><input class='form-control' name='title'>
 					</div>
@@ -74,7 +76,9 @@
 					</div>
 					
 					<div class='form-group'>
-						<label>Writer</label><input class='form-control' name='writer'>
+						<label>Writer</label><input class='form-control' name='writer' 
+							value='<sec:authentication property="principal.username"/>'
+							readonly="readonly">
 					</div>
 					<button type='submit' class='btn btn-default'>Submit Button</button>
 					<button type='reset' class='btn btn-default'>Reset Button</button>
@@ -151,6 +155,9 @@ $(document).ready(function(e){
 		return true;
 	}//func checkExtension
 	
+	var csrfHeaderName ="${_csrf.headerName}"; 
+	var csrfTokenValue="${_csrf.token}";
+	
 	$("input[type='file']").change(function(e){
 		var formData = new FormData();
 		var inputFile = $("input[name='uploadFile']");
@@ -168,6 +175,9 @@ $(document).ready(function(e){
 		url: '/uploadAjaxAction',
 		processData: false,
 		contentType: false,
+		beforeSend: function(xhr) {
+			xhr.setRequestHeader(csrfHeaderName, csrfTokenValue);
+		},
 		data: formData,
 		type: 'POST',
 		dataType: 'json', 
@@ -226,10 +236,13 @@ $(document).ready(function(e){
 		$.ajax({
 			url: '/deleteFile',
 			data: {fileName: targetFile, type: type},
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader(csrfHeaderName, csrfTokenValue);
+			},
 			type: 'POST',
 			dataType: 'text', 
 			success: function(result){ 
-				console.log(result);
+				alert(result);
 				targetLi.remove();
 			}
 		});//$.ajax
