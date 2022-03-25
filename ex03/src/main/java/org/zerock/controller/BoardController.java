@@ -79,16 +79,21 @@ public class BoardController {
 	@PostMapping("/modify")
 	public String modify(BoardVO board, @ModelAttribute("cri") Criteria cri,
 			RedirectAttributes rttr) {
-		log.info("modify" + board);
+		log.info("modify: " + board);
 		
 		if(service.modify(board)) {
 			rttr.addFlashAttribute("result", "success");
 		}
 		
+		System.out.println("pageNum" + cri.getPageNum() + "\n"
+						+ "amount" + cri.getAmount() + "\n"
+						+ cri.getType() + "\n"
+						+ cri.getKeyword() + "\n");
+		
 		rttr.addAttribute("pageNum", cri.getPageNum());
 		rttr.addAttribute("amount", cri.getAmount());
-		rttr.addAttribute("amount", cri.getType());
-		rttr.addAttribute("amount", cri.getKeyword());
+		rttr.addAttribute("type", cri.getType());
+		rttr.addAttribute("keyword", cri.getKeyword());
 		
 		return "redirect:/board/list";
 	}
@@ -103,8 +108,8 @@ public class BoardController {
 		
 		rttr.addAttribute("pageNum", cri.getPageNum());
 		rttr.addAttribute("amount", cri.getAmount());
-		rttr.addAttribute("amount", cri.getType());
-		rttr.addAttribute("amount", cri.getKeyword());
+		rttr.addAttribute("type", cri.getType());
+		rttr.addAttribute("keyword", cri.getKeyword());
 
 		return "redirect:/board/list";
 	}
