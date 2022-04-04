@@ -5,7 +5,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 	
-	<bean id="customAccessDenied" class="org.zerock.security.CustomAccessDeniedHandler"/>
+	<!-- <bean id="customAccessDenied" class="org.zerock.security.CustomAccessDeniedHandler"/> -->
 	<bean id="customLoginSuccess" class="org.zerock.security.CustomLoginSuccessHandler"/>
 	<!-- <bean id="customPasswordEncoder" class="org.zerock.security.CustomNoOpPasswordEncoder"/> -->
 	<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
@@ -17,7 +17,7 @@
 			<security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')"/>
 		<security:form-login login-page="/customLogin" authentication-success-handler-ref="customLoginSuccess"/>
 		<!-- <security:access-denied-handler error-page="/accessError"/> -->
-		<security:access-denied-handler ref="customAccessDenied"/>
+		<!-- <security:access-denied-handler ref="customAccessDenied"/> -->
 		<security:logout logout-url="/customLogout" invalidate-session="true" 
 						delete-cookies="remember-me, JSESSION_ID" />
 		<security:remember-me data-source-ref="dataSource" token-validity-seconds="604800"/>
